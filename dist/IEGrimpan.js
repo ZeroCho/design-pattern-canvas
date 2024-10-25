@@ -1,10 +1,6 @@
-export default class IEGrimpan {
+import Grimpan from './AbstractGrimpan.js';
+class IEGrimpan extends Grimpan {
     static instance;
-    constructor(canvas) {
-        if (!canvas || !(canvas instanceof HTMLCanvasElement)) {
-            throw new Error('canvas 엘리먼트를 입력하세요');
-        }
-    }
     initialize() { }
     initializeMenu() { }
     static getInstance() {
@@ -14,3 +10,4 @@ export default class IEGrimpan {
         return this.instance;
     }
 }
+export default IEGrimpan;
