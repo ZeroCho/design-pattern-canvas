@@ -3,8 +3,7 @@ import Grimpan from './AbstractGrimpan.js';
 class ChromeGrimpan extends Grimpan {
   private static instance: ChromeGrimpan;
 
-  intialize() {}
-  intializeMenu() {}
+  initialize() {}
 
   static override getInstance() {
     if (!this.instance) {

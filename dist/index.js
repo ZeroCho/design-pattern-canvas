@@ -1,4 +1,11 @@
-import Grimpan from './grimpan.js';
+import { ChromeGrimpanFactory } from './GrimpanFactory.js';
 function main() {
-    Grimpan.getInstance().intialize();
+    const factory = ChromeGrimpanFactory;
+    const grimpan = factory.createGrimpan();
+    const grimpanMenu = factory.createGrimpanMenu(grimpan);
+    const grimpanHistory = factory.createGrimpanHistory(grimpan);
+    grimpan.initialize();
+    grimpanMenu.initialize();
+    grimpanHistory.initialize();
 }
+main();
