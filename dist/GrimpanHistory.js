@@ -1,7 +1,20 @@
+class HistoryStack extends Array {
+    clone() {
+        return this.slice();
+    }
+}
 export class GrimpanHistory {
     grimpan;
+    stack;
     constructor(grimpan) {
         this.grimpan = grimpan;
+        this.stack = new HistoryStack();
+    }
+    getStack() {
+        return this.stack.clone();
+    }
+    setStack(stack) {
+        this.stack = stack.clone();
     }
     static getInstance(grimpan) { }
 }
