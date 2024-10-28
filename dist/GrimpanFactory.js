@@ -1,7 +1,6 @@
-import ChromeGrimpan from './ChromeGrimpan.js';
-import IEGrimpan from './IEGrimpan.js';
 import { ChromeGrimpanMenu, IEGrimpanMenu } from './GrimpanMenu.js';
 import { ChromeGrimpanHistory, IEGrimpanHistory } from './GrimpanHistory.js';
+import { ChromeGrimpan, IEGrimpan } from './Grimpan.js';
 export class AbstractGrimpanFactory {
     static createGrimpan() {
         throw new Error('하위 클래스에서 구현하셔야 합니다.');
