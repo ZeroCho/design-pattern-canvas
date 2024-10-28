@@ -1,17 +1,62 @@
-class Grimpan {
-    static instance;
-    constructor(canvas) {
+import { BackCommand, ForwardCommand } from "./commands/index.js";
+import { ChromeGrimpanFactory, IEGrimpanFactory } from "./GrimpanFactory.js";
+export class Grimpan {
+    canvas;
+    ctx;
+    history;
+    menu;
+    mode;
+    constructor(canvas, factory) {
         if (!canvas || !(canvas instanceof HTMLCanvasElement)) {
             throw new Error('canvas 엘리먼트를 입력하세요');
         }
+        this.canvas = canvas;
+        this.ctx = this.canvas.getContext('2d');
     }
-    initialize() { }
-    initializeMenu() { }
+    setMode(mode) {
+        console.log('mode change', mode);
+        this.mode = mode;
+    }
+    static getInstance() { }
+}
+export class ChromeGrimpan extends Grimpan {
+    static instance;
+    menu;
+    history;
+    constructor(canvas, factory) {
+        super(canvas, factory);
+        this.menu = factory.createGrimpanMenu(this, document.querySelector('#menu'));
+        this.history = factory.createGrimpanHistory(this);
+    }
+    initialize(option) {
+        this.menu.initialize(option.menu);
+        this.history.initialize();
+        window.addEventListener('keyup', (e) => {
+            console.log(e);
+            if (e.code === 'KeyZ' && e.ctrlKey && e.shiftKey) {
+                this.menu.executeCommand(new ForwardCommand(this.history));
+                return;
+            }
+            if (e.code === 'KeyZ' && e.ctrlKey) {
+                this.menu.executeCommand(new BackCommand(this.history));
+                return;
+            }
+        });
+    }
     static getInstance() {
         if (!this.instance) {
-            this.instance = new Grimpan(document.querySelector('canvas'));
+            this.instance = new ChromeGrimpan(document.querySelector('canvas'), ChromeGrimpanFactory);
         }
         return this.instance;
     }
 }
-export default Grimpan;
+export class IEGrimpan extends Grimpan {
+    static instance;
+    initialize() { }
+    static getInstance() {
+        if (!this.instance) {
+            this.instance = new IEGrimpan(document.querySelector('canvas'), IEGrimpanFactory);
+        }
+        return this.instance;
+    }
+}

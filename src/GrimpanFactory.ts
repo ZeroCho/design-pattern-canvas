@@ -1,8 +1,6 @@
-import ChromeGrimpan from './ChromeGrimpan.js';
-import IEGrimpan from './IEGrimpan.js';
 import { ChromeGrimpanMenu, IEGrimpanMenu } from './GrimpanMenu.js'
 import { ChromeGrimpanHistory, IEGrimpanHistory } from './GrimpanHistory.js'
-import Grimpan from './AbstractGrimpan.js';
+import {Grimpan, ChromeGrimpan, IEGrimpan} from './Grimpan.js';
 
 export abstract class AbstractGrimpanFactory {
   static createGrimpan() {
@@ -35,7 +33,7 @@ export class IEGrimpanFactory extends AbstractGrimpanFactory {
   static override createGrimpanMenu(grimpan: IEGrimpan, dom: HTMLElement) {
     return IEGrimpanMenu.getInstance(grimpan, dom)
   }
-  static override createGrimpanHistory(grimpan: ChromeGrimpan) {
+  static override createGrimpanHistory(grimpan: IEGrimpan) {
     return IEGrimpanHistory.getInstance(grimpan)
   }
 }
