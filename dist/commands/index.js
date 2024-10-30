@@ -79,3 +79,14 @@ export class PipetteSelectCommand extends Command {
         this.grimpan.menu.setActiveBtn('pipette');
     }
 }
+export class SaveCommand extends Command {
+    grimpan;
+    name = 'save';
+    constructor(grimpan) {
+        super();
+        this.grimpan = grimpan;
+    }
+    execute() {
+        this.grimpan.saveStrategy();
+    }
+}

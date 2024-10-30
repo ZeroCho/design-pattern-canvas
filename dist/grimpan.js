@@ -9,6 +9,7 @@ export class Grimpan {
     mode;
     color;
     active;
+    saveStrategy;
     constructor(canvas, factory) {
         if (!canvas || !(canvas instanceof HTMLCanvasElement)) {
             throw new Error('canvas 엘리먼트를 입력하세요');
@@ -17,6 +18,50 @@ export class Grimpan {
         this.ctx = this.canvas.getContext('2d');
         this.color = '#000';
         this.active = false;
+        this.setSaveStrategy('webp');
+    }
+    setSaveStrategy(imageType) {
+        switch (imageType) {
+            case 'png':
+                this.saveStrategy = () => {
+                    const a = document.createElement('a');
+                    a.download = 'canvas.png';
+                    const dataURL = this.canvas.toDataURL('image/png');
+                    let url = dataURL.replace(/^data:image\/png/, 'data:application/octet-stream');
+                    a.href = url;
+                    a.click();
+                };
+                break;
+            case 'jpg':
+                this.saveStrategy = () => {
+                    const a = document.createElement('a');
+                    a.download = 'canvas.jpg';
+                    const dataURL = this.canvas.toDataURL('image/jpeg');
+                    let url = dataURL.replace(/^data:image\/jpeg/, 'data:application/octet-stream');
+                    a.href = url;
+                    a.click();
+                };
+                break;
+            case 'webp':
+                this.saveStrategy = () => {
+                    const a = document.createElement('a');
+                    a.download = 'canvas.webp';
+                    const dataURL = this.canvas.toDataURL('image/webp');
+                    let url = dataURL.replace(/^data:image\/webp/, 'data:application/octet-stream');
+                    a.href = url;
+                    a.click();
+                };
+                break;
+            case 'avif':
+                this.saveStrategy = () => { };
+                break;
+            case 'gif':
+                this.saveStrategy = () => { };
+                break;
+            case 'pdf':
+                this.saveStrategy = () => { };
+                break;
+        }
     }
     setMode(mode) {
         console.log('mode change', mode);

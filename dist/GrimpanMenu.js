@@ -1,5 +1,5 @@
 import { GrimpanMenuBtn, GrimpanMenuInput } from "./GrimpanMenuBtn.js";
-import { BackCommand, CircleSelectCommand, EraserSelectCommand, PenSelectCommand, PipetteSelectCommand, RectangleSelectCommand } from "./commands/index.js";
+import { BackCommand, PenSelectCommand, SaveCommand } from "./commands/index.js";
 export class GrimpanMenu {
     grimpan;
     dom;
@@ -39,6 +39,9 @@ export class ChromeGrimpanMenu extends GrimpanMenu {
         types.forEach(this.drawButtonByType.bind(this));
         this.grimpan.setMode('pen');
     }
+    onSave() {
+        this.executeCommand(new SaveCommand(this.grimpan));
+    }
     onClickBack() {
         this.executeCommand(new BackCommand(this.grimpan.history)); // { name: 'back' };
     }
@@ -48,16 +51,16 @@ export class ChromeGrimpanMenu extends GrimpanMenu {
         this.grimpan.history.stack.push(command);
     }
     onClickEraser() {
-        this.executeCommand(new EraserSelectCommand(this.grimpan)); // { name: 'eraser' };
+        this.grimpan.setMode('eraser');
     }
     onClickCircle() {
-        this.executeCommand(new CircleSelectCommand(this.grimpan)); // { name: 'eraser' };
+        this.grimpan.setMode('circle');
     }
     onClickRectangle() {
-        this.executeCommand(new RectangleSelectCommand(this.grimpan)); // { name: 'eraser' };
+        this.grimpan.setMode('rectangle');
     }
     onClickPipette() {
-        this.executeCommand(new PipetteSelectCommand(this.grimpan)); // { name: 'eraser' };
+        this.grimpan.setMode('pipette');
     }
     drawButtonByType(type) {
         switch (type) {
@@ -124,7 +127,9 @@ export class ChromeGrimpanMenu extends GrimpanMenu {
                 return btn;
             }
             case 'save': {
-                const btn = new GrimpanMenuBtn.Builder(this, '저장', type).build();
+                const btn = new GrimpanMenuBtn.Builder(this, '저장', type)
+                    .setOnClick(this.onSave.bind(this))
+                    .build();
                 btn.draw();
                 return btn;
             }
