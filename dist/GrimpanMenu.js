@@ -3,6 +3,7 @@ import { BackCommand, CircleSelectCommand, EraserSelectCommand, PenSelectCommand
 export class GrimpanMenu {
     grimpan;
     dom;
+    colorBtn;
     constructor(grimpan, dom) {
         this.grimpan = grimpan;
         this.dom = dom;
@@ -10,7 +11,14 @@ export class GrimpanMenu {
     setActiveBtn(type) {
         document.querySelector('.active')?.classList.remove('active');
         document.querySelector(`#${type}-btn`)?.classList.add('active');
-        this.grimpan.setMode(type);
+    }
+    executeCommand(command) {
+        // 비활성화 로직
+        // if (비활성화) {
+        //   return;
+        // }
+        // Invoker가 명령을 실행
+        command.execute();
     }
     static getInstance(grimpan, dom) { }
 }
@@ -29,15 +37,7 @@ export class ChromeGrimpanMenu extends GrimpanMenu {
     static instance;
     initialize(types) {
         types.forEach(this.drawButtonByType.bind(this));
-        this.setActiveBtn('pen');
-    }
-    executeCommand(command) {
-        // 비활성화 로직
-        // if (비활성화) {
-        //   return;
-        // }
-        // Invoker가 명령을 실행
-        command.execute();
+        this.grimpan.setMode('pen');
     }
     onClickBack() {
         this.executeCommand(new BackCommand(this.grimpan.history)); // { name: 'back' };
@@ -79,8 +79,10 @@ export class ChromeGrimpanMenu extends GrimpanMenu {
             }
             case 'color': {
                 const btn = new GrimpanMenuInput.Builder(this, '컬러', type)
-                    .setOnChange(() => {
-                    // 컬러 변경 작업
+                    .setOnChange((e) => {
+                    if (e.target) {
+                        this.grimpan.setColor(e.target.value);
+                    }
                 })
                     .build();
                 btn.draw();
