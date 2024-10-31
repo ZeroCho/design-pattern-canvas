@@ -17,6 +17,11 @@ export abstract class Grimpan {
   color: string;
   active: boolean;
   saveStrategy!: () => void;
+  saveSetting = {
+    blur: false,
+    grayscale: false,
+    invert: false,
+  };
 
   protected constructor(canvas: HTMLElement | null, factory: typeof AbstractGrimpanFactory) {
     if (!canvas || !(canvas instanceof HTMLCanvasElement)) {
