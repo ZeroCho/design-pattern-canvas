@@ -1,5 +1,5 @@
 import { Grimpan, GrimpanMode, IEGrimpan, ChromeGrimpan } from "./Grimpan.js";
-import { GrimpanMenuBtn, GrimpanMenuInput } from "./GrimpanMenuBtn.js";
+import { GrimpanMenuBtn, GrimpanMenuInput, GrimpanMenuSaveBtn } from "./GrimpanMenuBtn.js";
 import { BackCommand, CircleSelectCommand, Command, EraserSelectCommand, PenSelectCommand, PipetteSelectCommand, RectangleSelectCommand, SaveCommand } from "./commands/index.js";
 import { Mode } from "./modes/index.js";
 
@@ -149,8 +149,19 @@ export class ChromeGrimpanMenu extends GrimpanMenu {
         return btn;
       }
       case 'save': {
-        const btn = new GrimpanMenuBtn.Builder(this, '저장', type)
+        const btn = new GrimpanMenuSaveBtn.Builder(this, '저장', type)
           .setOnClick(this.onSave.bind(this))
+          .setFilterListeners({
+            blur: (e: Event) => {
+              this.grimpan.saveSetting.blur = (e.target as HTMLInputElement)?.checked;
+            },
+            grayscale: (e: Event) => {
+              this.grimpan.saveSetting.blur = (e.target as HTMLInputElement)?.checked;
+            },
+            invert: (e: Event) => {
+              this.grimpan.saveSetting.blur = (e.target as HTMLInputElement)?.checked;
+            }
+          })
           .build();
           btn.draw();
         return btn;
