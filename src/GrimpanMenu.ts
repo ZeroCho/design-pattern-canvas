@@ -11,6 +11,14 @@ export abstract class GrimpanMenu {
   protected constructor(grimpan: Grimpan, dom: HTMLElement) {
     this.grimpan = grimpan;
     this.dom = dom;
+    this.grimpan.saveCompleteObserver.subscribe({
+      name: 'menu',
+      publish: this.afterSaveComplete.bind(this)
+    })
+  }
+
+  afterSaveComplete() {
+    console.log('menu: save complete');
   }
 
   setActiveBtn(type: GrimpanMode) {

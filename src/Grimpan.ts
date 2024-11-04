@@ -4,6 +4,7 @@ import { AbstractGrimpanFactory, ChromeGrimpanFactory, IEGrimpanFactory } from "
 import { ChromeGrimpanHistory, GrimpanHistory } from "./GrimpanHistory.js";
 import { BtnType, ChromeGrimpanMenu, GrimpanMenu } from "./GrimpanMenu.js";
 import { CircleMode, EraserMode, Mode, PenMode, PipetteMode, RectangleMode } from "./modes/index.js";
+import { SaveCompleteObserver } from './Observer.js';
 
 export interface GrimpanOption {
   menu: BtnType[];
@@ -23,6 +24,7 @@ export abstract class Grimpan {
     grayscale: false,
     invert: false,
   };
+  saveCompleteObserver: SaveCompleteObserver;
 
   protected constructor(canvas: HTMLElement | null, factory: typeof AbstractGrimpanFactory) {
     if (!canvas || !(canvas instanceof HTMLCanvasElement)) {
@@ -33,6 +35,7 @@ export abstract class Grimpan {
     this.color = '#000';
     this.active = false;
     this.setSaveStrategy('png');
+    this.saveCompleteObserver = new SaveCompleteObserver();
   }
 
   setSaveStrategy(imageType: 'png' | 'jpg' | 'webp' | 'avif' | 'gif' | 'pdf') {
@@ -70,6 +73,7 @@ export abstract class Grimpan {
                     let url = dataURL.replace(/^data:image\/png/,'data:application/octet-stream');
                     a.href = url;
                     a.click();
+                    this.saveCompleteObserver.publish();
                   });
                   reader.readAsDataURL(blob);
                 });

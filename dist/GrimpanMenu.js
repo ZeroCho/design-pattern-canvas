@@ -7,6 +7,13 @@ export class GrimpanMenu {
     constructor(grimpan, dom) {
         this.grimpan = grimpan;
         this.dom = dom;
+        this.grimpan.saveCompleteObserver.subscribe({
+            name: 'menu',
+            publish: this.afterSaveComplete.bind(this)
+        });
+    }
+    afterSaveComplete() {
+        console.log('menu: save complete');
     }
     setActiveBtn(type) {
         document.querySelector('.active')?.classList.remove('active');

@@ -2,6 +2,7 @@ import { BackCommand, ForwardCommand } from "./commands/index.js";
 import { BlurFilter, DefaultFilter, GrayscaleFilter, InvertFilter } from "./filters/index.js";
 import { ChromeGrimpanFactory, IEGrimpanFactory } from "./GrimpanFactory.js";
 import { CircleMode, EraserMode, PenMode, PipetteMode, RectangleMode } from "./modes/index.js";
+import { SaveCompleteObserver } from './Observer.js';
 export class Grimpan {
     canvas;
     ctx;
@@ -16,6 +17,7 @@ export class Grimpan {
         grayscale: false,
         invert: false,
     };
+    saveCompleteObserver;
     constructor(canvas, factory) {
         if (!canvas || !(canvas instanceof HTMLCanvasElement)) {
             throw new Error('canvas 엘리먼트를 입력하세요');
@@ -25,6 +27,7 @@ export class Grimpan {
         this.color = '#000';
         this.active = false;
         this.setSaveStrategy('png');
+        this.saveCompleteObserver = new SaveCompleteObserver();
     }
     setSaveStrategy(imageType) {
         switch (imageType) {
@@ -61,6 +64,7 @@ export class Grimpan {
                                 let url = dataURL.replace(/^data:image\/png/, 'data:application/octet-stream');
                                 a.href = url;
                                 a.click();
+                                this.saveCompleteObserver.publish();
                             });
                             reader.readAsDataURL(blob);
                         });
