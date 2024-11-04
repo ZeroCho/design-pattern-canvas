@@ -30,6 +30,7 @@ export class PenMode extends Mode {
     this.grimpan.active = true;
     this.grimpan.ctx.lineWidth = 1;
     this.grimpan.ctx.lineCap = 'round';
+    this.grimpan.ctx.filter = 'blur(4px)';
     this.grimpan.ctx.strokeStyle = this.grimpan.color;
     this.grimpan.ctx.globalCompositeOperation = 'source-over';
     this.grimpan.ctx.beginPath()
