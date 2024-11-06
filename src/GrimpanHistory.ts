@@ -1,6 +1,23 @@
 import {Grimpan, IEGrimpan, ChromeGrimpan} from "./Grimpan.js";
 import { SubscriptionManager } from "./Observer.js";
 
+class StackIterator {
+  private index = 0;
+  constructor(private readonly stack: HistoryStack) {}
+
+  next() {
+    if (!this.done) {
+      return this.stack[this.index++];
+    }
+    // 없는 순간
+  }
+
+  get done() {
+    return this.stack.length === this.index;
+    // [0, 1, 2]
+  }
+}
+
 interface Clonable {
   clone(): Clonable;
 }

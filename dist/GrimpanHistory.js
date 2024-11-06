@@ -1,4 +1,21 @@
 import { SubscriptionManager } from "./Observer.js";
+class StackIterator {
+    stack;
+    index = 0;
+    constructor(stack) {
+        this.stack = stack;
+    }
+    next() {
+        if (!this.done) {
+            return this.stack[this.index++];
+        }
+        // 없는 순간
+    }
+    get done() {
+        return this.stack.length === this.index;
+        // [0, 1, 2]
+    }
+}
 class HistoryStack extends Array {
     clone() {
         return this.slice();
