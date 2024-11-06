@@ -1,4 +1,4 @@
-import { CircleSelectCommand, EraserSelectCommand, PenSelectCommand, PipetteSelectCommand, RectangleSelectCommand } from "../commands/index.js";
+import { CircleSelectCommand, Command, EraserSelectCommand, PenSelectCommand, PipetteSelectCommand, RectangleSelectCommand, SaveHistoryCommand } from "../commands/index.js";
 import { Grimpan } from "../Grimpan.js";
 
 const convertToHex = (color: number) => {
@@ -19,6 +19,9 @@ export abstract class Mode {
   abstract mousedown(e: MouseEvent): void;
   abstract mousemove(e: MouseEvent): void;
   abstract mouseup(e: MouseEvent): void;
+  invoke(command: Command) {
+    command.execute();
+  }
 }
 export class PenMode extends Mode {
   constructor(grimpan: Grimpan) {
@@ -30,7 +33,6 @@ export class PenMode extends Mode {
     this.grimpan.active = true;
     this.grimpan.ctx.lineWidth = 1;
     this.grimpan.ctx.lineCap = 'round';
-    this.grimpan.ctx.filter = 'blur(4px)';
     this.grimpan.ctx.strokeStyle = this.grimpan.color;
     this.grimpan.ctx.globalCompositeOperation = 'source-over';
     this.grimpan.ctx.beginPath()
@@ -45,8 +47,11 @@ export class PenMode extends Mode {
     this.grimpan.ctx.moveTo(e.offsetX, e.offsetY);
   }
   override mouseup(e: MouseEvent): void {
+    if (this.grimpan.active) {
+      // 히스토리 저장
+      this.invoke(new SaveHistoryCommand(this.grimpan));
+    }
     this.grimpan.active = false;
-    // 히스토리 저장
   }
 }
 export class EraserMode extends Mode {
@@ -73,8 +78,11 @@ export class EraserMode extends Mode {
     this.grimpan.ctx.moveTo(e.offsetX, e.offsetY);
   }
   override mouseup(e: MouseEvent): void {
+    if (this.grimpan.active) {
+      // 히스토리 저장
+      this.invoke(new SaveHistoryCommand(this.grimpan));
+    }
     this.grimpan.active = false;
-    // 히스토리 저장
   }
 }
 export class PipetteMode extends Mode {
@@ -90,6 +98,7 @@ export class PipetteMode extends Mode {
     const { data } = this.grimpan.ctx.getImageData(e.offsetX, e.offsetY, 1, 1);
     if (data[3] === 0) {
       this.grimpan.changeColor('#ffffff');
+      
     } else {
       this.grimpan.changeColor(rgb2hex(data[0], data[1], data[2]));
     }
@@ -105,13 +114,17 @@ export class RectangleMode extends Mode {
   }
 
   override mousedown(): void {
-    
+    this.grimpan.active = true;
   }
   override mousemove(): void {
     
   }
-  override mouseup(): void {
-    
+  override mouseup(e: MouseEvent): void {
+    if (this.grimpan.active) {
+      // 히스토리 저장
+      this.invoke(new SaveHistoryCommand(this.grimpan));
+    }
+    this.grimpan.active = false;
   }
 }
 export class CircleMode extends Mode {
@@ -121,12 +134,16 @@ export class CircleMode extends Mode {
   }
 
   override mousedown(): void {
-    
+    this.grimpan.active = true;
   }
   override mousemove(): void {
     
   }
-  override mouseup(): void {
-    
+  override mouseup(e: MouseEvent): void {
+    if (this.grimpan.active) {
+      // 히스토리 저장
+      this.invoke(new SaveHistoryCommand(this.grimpan));
+    }
+    this.grimpan.active = false;
   }
 }

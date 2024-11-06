@@ -8,11 +8,15 @@ class HistoryStack extends Array implements Clonable {
   clone() {
     return this.slice() as HistoryStack;
   }
+  override slice(start?: number, end?: number): HistoryStack {
+    return super.slice(start, end) as HistoryStack;
+  }
 }
 
 export abstract class GrimpanHistory {
   grimpan: Grimpan;
   stack: HistoryStack;
+  index = -1;
 
   protected constructor(grimpan: Grimpan) {
     this.grimpan = grimpan;
@@ -23,6 +27,23 @@ export abstract class GrimpanHistory {
     });
   }
 
+  // caretaker
+  saveHistory() {
+    const snapshot = this.grimpan.makeSnapshot();
+    if (this.index === this.stack.length - 1) {
+      this.stack.push(snapshot);
+      this.index++;
+    } else {
+      // 뒤로가기를 몇 번 누른 상황
+      this.stack = this.stack.slice(0, this.index + 1);
+      this.stack.push(snapshot);
+      this.index++;
+    }
+    (document.querySelector('#back-btn') as HTMLButtonElement).disabled = false;
+    (document.querySelector('#forward-btn') as HTMLButtonElement).disabled = true;
+    console.log('save', this.index, this.stack);
+  }
+
   afterSaveComplete() {
     console.log('history: save complete');
   }
@@ -31,8 +52,41 @@ export abstract class GrimpanHistory {
     SubscriptionManager.getInstance().unsubscribe('saveComplete', 'history');
   }
 
-  abstract undo(): void;
-  abstract redo(): void;
+  undoable() {
+    return this.index > 0;
+  }
+
+  redoable() {
+    return this.index < this.stack.length - 1;
+  }
+
+  undo(): void {
+    console.log('undo', this.index, this.stack);
+    if (this.undoable()) { // [0]
+      this.index--;
+      (document.querySelector('#forward-btn') as HTMLButtonElement).disabled = false;
+    } else {
+      return;
+    }
+    if (!this.undoable()) {
+      (document.querySelector('#back-btn') as HTMLButtonElement).disabled = true;
+    }
+    this.grimpan.restore(this.stack[this.index]);
+  }
+
+  redo(): void {
+    console.log('redo', this.index, this.stack);
+    if (this.redoable()) {
+      this.index++;
+      (document.querySelector('#back-btn') as HTMLButtonElement).disabled = false;
+    } else {
+      return;
+    }
+    if (!this.redoable()) {
+      (document.querySelector('#forward-btn') as HTMLButtonElement).disabled = true;
+    }
+    this.grimpan.restore(this.stack[this.index]);
+  }
 
   getStack() {
     return this.stack.clone();
@@ -42,23 +96,16 @@ export abstract class GrimpanHistory {
     this.stack = stack.clone();
   }
 
-  abstract initialize(): void
+  initialize() {
+    (document.querySelector('#back-btn') as HTMLButtonElement).disabled = true;
+    (document.querySelector('#forward-btn') as HTMLButtonElement).disabled = true;
+  }
 
   static getInstance(grimpan: Grimpan) {}
 }
 
 export class IEGrimpanHistory extends GrimpanHistory {
   private static instance: IEGrimpanHistory;
-  override initialize(): void {
-    
-  }
-
-  override undo(): void {
-    
-  }
-  override redo(): void {
-    
-  }
 
   static override getInstance(grimpan: IEGrimpan): IEGrimpanHistory {
     if (!this.instance) {
@@ -70,16 +117,6 @@ export class IEGrimpanHistory extends GrimpanHistory {
 
 export class ChromeGrimpanHistory extends GrimpanHistory {
   private static instance: ChromeGrimpanHistory;
-  override initialize(): void {
-    
-  }
-
-  override undo(): void {
-    
-  }
-  override redo(): void {
-    
-  }
 
   static override getInstance(grimpan: ChromeGrimpan): ChromeGrimpanHistory {
     if (!this.instance) {

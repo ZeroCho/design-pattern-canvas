@@ -39,6 +39,18 @@ export class PenSelectCommand extends Command {
     this.grimpan.menu.setActiveBtn('pen');
   }
 }
+export class SaveHistoryCommand extends Command {
+  name = 'saveHistory';
+
+  constructor(private grimpan: Grimpan) {
+    super();
+  }
+
+  override execute(): void {
+    // 그리기 끝난 후 현재 상태 저장
+    this.grimpan.history.saveHistory();
+  }
+}
 export class EraserSelectCommand extends Command {
   name = 'eraserSelect';
 

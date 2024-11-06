@@ -1,4 +1,4 @@
-import { CircleSelectCommand, EraserSelectCommand, PenSelectCommand, PipetteSelectCommand, RectangleSelectCommand } from "../commands/index.js";
+import { CircleSelectCommand, EraserSelectCommand, PenSelectCommand, PipetteSelectCommand, RectangleSelectCommand, SaveHistoryCommand } from "../commands/index.js";
 const convertToHex = (color) => {
     if (color < 0) {
         return 0;
@@ -17,6 +17,9 @@ export class Mode {
     constructor(grimpan) {
         this.grimpan = grimpan;
     }
+    invoke(command) {
+        command.execute();
+    }
 }
 export class PenMode extends Mode {
     constructor(grimpan) {
@@ -27,7 +30,6 @@ export class PenMode extends Mode {
         this.grimpan.active = true;
         this.grimpan.ctx.lineWidth = 1;
         this.grimpan.ctx.lineCap = 'round';
-        this.grimpan.ctx.filter = 'blur(4px)';
         this.grimpan.ctx.strokeStyle = this.grimpan.color;
         this.grimpan.ctx.globalCompositeOperation = 'source-over';
         this.grimpan.ctx.beginPath();
@@ -42,8 +44,11 @@ export class PenMode extends Mode {
         this.grimpan.ctx.moveTo(e.offsetX, e.offsetY);
     }
     mouseup(e) {
+        if (this.grimpan.active) {
+            // 히스토리 저장
+            this.invoke(new SaveHistoryCommand(this.grimpan));
+        }
         this.grimpan.active = false;
-        // 히스토리 저장
     }
 }
 export class EraserMode extends Mode {
@@ -69,8 +74,11 @@ export class EraserMode extends Mode {
         this.grimpan.ctx.moveTo(e.offsetX, e.offsetY);
     }
     mouseup(e) {
+        if (this.grimpan.active) {
+            // 히스토리 저장
+            this.invoke(new SaveHistoryCommand(this.grimpan));
+        }
         this.grimpan.active = false;
-        // 히스토리 저장
     }
 }
 export class PipetteMode extends Mode {
@@ -99,10 +107,16 @@ export class RectangleMode extends Mode {
         grimpan.menu.executeCommand(new RectangleSelectCommand(grimpan));
     }
     mousedown() {
+        this.grimpan.active = true;
     }
     mousemove() {
     }
-    mouseup() {
+    mouseup(e) {
+        if (this.grimpan.active) {
+            // 히스토리 저장
+            this.invoke(new SaveHistoryCommand(this.grimpan));
+        }
+        this.grimpan.active = false;
     }
 }
 export class CircleMode extends Mode {
@@ -111,9 +125,15 @@ export class CircleMode extends Mode {
         grimpan.menu.executeCommand(new CircleSelectCommand(grimpan));
     }
     mousedown() {
+        this.grimpan.active = true;
     }
     mousemove() {
     }
-    mouseup() {
+    mouseup(e) {
+        if (this.grimpan.active) {
+            // 히스토리 저장
+            this.invoke(new SaveHistoryCommand(this.grimpan));
+        }
+        this.grimpan.active = false;
     }
 }
