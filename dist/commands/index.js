@@ -11,6 +11,17 @@ export class BackCommand extends Command {
         this.history.undo(); // receiver에게 로직 전송
     }
 }
+export class ForwardCommand extends Command {
+    history;
+    name = 'forward';
+    constructor(history) {
+        super();
+        this.history = history;
+    }
+    execute() {
+        this.history.redo(); // receiver에게 로직 전송
+    }
+}
 export class PenSelectCommand extends Command {
     grimpan;
     name = 'penSelect';
@@ -21,6 +32,18 @@ export class PenSelectCommand extends Command {
     execute() {
         // 펜 구현
         this.grimpan.menu.setActiveBtn('pen');
+    }
+}
+export class SaveHistoryCommand extends Command {
+    grimpan;
+    name = 'saveHistory';
+    constructor(grimpan) {
+        super();
+        this.grimpan = grimpan;
+    }
+    execute() {
+        // 그리기 끝난 후 현재 상태 저장
+        this.grimpan.history.saveHistory();
     }
 }
 export class EraserSelectCommand extends Command {
