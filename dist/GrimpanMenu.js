@@ -1,10 +1,12 @@
 import { GrimpanMenuBtn, GrimpanMenuInput, GrimpanMenuSaveBtn } from "./GrimpanMenuBtn.js";
+import { ChromeMenuDrawVisitor } from "./MenuDrawVisitor.js";
 import { SubscriptionManager } from "./Observer.js";
 import { BackCommand, ForwardCommand, SaveCommand, SaveHistoryCommand } from "./commands/index.js";
 export class GrimpanMenu {
     grimpan;
     dom;
     colorBtn;
+    menuDrawVisitor;
     constructor(grimpan, dom) {
         this.grimpan = grimpan;
         this.dom = dom;
@@ -46,8 +48,15 @@ export class IEGrimpanMenu extends GrimpanMenu {
 }
 export class ChromeGrimpanMenu extends GrimpanMenu {
     static instance;
+    constructor(grimpan, dom, menuDrawVisitor = new ChromeMenuDrawVisitor()) {
+        super(grimpan, dom);
+        this.menuDrawVisitor = menuDrawVisitor;
+    }
     initialize(types) {
-        types.forEach(this.drawButtonByType.bind(this));
+        types.forEach((type) => {
+            const btn = this.drawButtonByType.bind(this)(type);
+            btn.draw(this.menuDrawVisitor);
+        });
         this.grimpan.setMode('pen');
         this.executeCommand(new SaveHistoryCommand(this.grimpan));
     }
@@ -81,14 +90,12 @@ export class ChromeGrimpanMenu extends GrimpanMenu {
                 const btn = new GrimpanMenuBtn.Builder(this, '뒤로', type)
                     .setOnClick(this.onClickBack.bind(this))
                     .build();
-                btn.draw();
                 return btn;
             }
             case 'forward': {
                 const btn = new GrimpanMenuBtn.Builder(this, '앞으로', type)
                     .setOnClick(this.onClickForward.bind(this))
                     .build();
-                btn.draw();
                 return btn;
             }
             case 'color': {
@@ -99,42 +106,36 @@ export class ChromeGrimpanMenu extends GrimpanMenu {
                     }
                 })
                     .build();
-                btn.draw();
                 return btn;
             }
             case 'pipette': {
                 const btn = new GrimpanMenuBtn.Builder(this, '스포이드', type)
                     .setOnClick(this.onClickPipette.bind(this))
                     .build();
-                btn.draw();
                 return btn;
             }
             case 'eraser': {
                 const btn = new GrimpanMenuBtn.Builder(this, '지우개', type)
                     .setOnClick(this.onClickEraser.bind(this))
                     .build();
-                btn.draw();
                 return btn;
             }
             case 'pen': {
                 const btn = new GrimpanMenuBtn.Builder(this, '펜', type)
                     .setOnClick(this.onClickPen.bind(this))
                     .build();
-                btn.draw();
                 return btn;
             }
             case 'circle': {
                 const btn = new GrimpanMenuBtn.Builder(this, '원', type)
                     .setOnClick(this.onClickCircle.bind(this))
                     .build();
-                btn.draw();
                 return btn;
             }
             case 'rectangle': {
                 const btn = new GrimpanMenuBtn.Builder(this, '사각형', type)
                     .setOnClick(this.onClickRectangle.bind(this))
                     .build();
-                btn.draw();
                 return btn;
             }
             case 'save': {
@@ -152,7 +153,6 @@ export class ChromeGrimpanMenu extends GrimpanMenu {
                     }
                 })
                     .build();
-                btn.draw();
                 return btn;
             }
             default:
