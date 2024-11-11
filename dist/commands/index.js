@@ -1,3 +1,22 @@
+export class Invoker {
+    command;
+    constructor(command) {
+        this.command = command;
+    }
+    invoke() {
+        this.command.run();
+    }
+}
+export class Adapter {
+    command;
+    constructor(command) {
+        this.command = command;
+    }
+    run() {
+        this.command.execute();
+    }
+}
+// new Invoker(new Adapter(new BackCommand({} as any)));
 export class Command {
 }
 export class BackCommand extends Command {
