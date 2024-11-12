@@ -51,6 +51,30 @@ class ExecuteCounter extends CommandDecorator {
   additional() {}
 }
 
+function countMixin(value: typeof BackCommand, context: ClassDecoratorContext) {
+  return class extends value {
+    override execute() {
+      super.execute();
+      if (counter[this.name]) {
+        counter[this.name]++;
+      } else {
+        counter[this.name] = 1;
+      }
+    }
+    additional() {}
+  }
+}
+function loggerMixin(value: typeof BackCommand, context: ClassDecoratorContext) {
+  return class extends value {
+    override execute() {
+      super.execute();
+    }
+    showLogger() {}
+  }
+}
+
+@countMixin
+@loggerMixin
 export class BackCommand extends Command {
   name = 'back';
 
@@ -62,8 +86,8 @@ export class BackCommand extends Command {
     this.history.undo(); // receiver에게 로직 전송
   }
 }
-new ExecuteCounter(new ExecuteLogger(new BackCommand({} as any)));
-new ExecuteLogger(new ExecuteCounter(new BackCommand({} as any)));
+// new ExecuteCounter(new ExecuteLogger(new BackCommand({} as any)));
+// new ExecuteLogger(new ExecuteCounter(new BackCommand({} as any)));
 
 export class ForwardCommand extends Command {
   name = 'forward';
@@ -113,11 +137,40 @@ export class EraserSelectCommand extends Command {
   }
 }
 
-export class CircleSelectCommand extends Command {
-  name = 'circleSelect';
+interface SelectCommand {
+  grimpan: Grimpan;
+  name: string;
+  execute(): void;
+}
+export class PremiumCommandProxy {
+  name: string;
+  constructor(private readonly command: SelectCommand) {
+    this.name = command.name;
+  }
 
-  constructor(private grimpan: Grimpan) {
+  execute(): void {
+    // if (!this.command.loaded) {
+    //   this.command.load();
+    // }
+    if (this.command.grimpan.isPremium) {
+      this.command.execute();
+    } else {
+      alert('프리미엄 이용자만 가능합니다.');
+    }
+  }
+}
+
+export class CircleSelectCommand extends Command implements SelectCommand {
+  name = 'circleSelect';
+  loaded = false;
+
+  constructor(public grimpan: Grimpan) {
     super();
+  }
+
+  load() {
+    // 무거운 작업
+    this.loaded = true;
   }
 
   override execute(): void {
@@ -125,11 +178,17 @@ export class CircleSelectCommand extends Command {
   }
 }
 
-export class RectangleSelectCommand extends Command {
+export class RectangleSelectCommand extends Command implements SelectCommand {
   name = 'rectangleSelect';
+  loaded = false;
 
-  constructor(private grimpan: Grimpan) {
+  constructor(public grimpan: Grimpan) {
     super();
+  }
+
+  load() {
+    // 무거운 작업
+    this.loaded = true;
   }
 
   override execute(): void {

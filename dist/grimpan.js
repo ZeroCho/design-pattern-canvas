@@ -11,6 +11,7 @@ export class Grimpan {
     mode;
     color;
     active;
+    isPremium = false;
     saveStrategy;
     saveSetting = {
         blur: false,

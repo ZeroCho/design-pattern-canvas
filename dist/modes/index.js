@@ -1,4 +1,4 @@
-import { CircleSelectCommand, EraserSelectCommand, PenSelectCommand, PipetteSelectCommand, RectangleSelectCommand, SaveHistoryCommand } from "../commands/index.js";
+import { CircleSelectCommand, EraserSelectCommand, PenSelectCommand, PipetteSelectCommand, PremiumCommandProxy, RectangleSelectCommand, SaveHistoryCommand } from "../commands/index.js";
 const convertToHex = (color) => {
     if (color < 0) {
         return 0;
@@ -104,7 +104,7 @@ export class PipetteMode extends Mode {
 export class RectangleMode extends Mode {
     constructor(grimpan) {
         super(grimpan);
-        grimpan.menu.executeCommand(new RectangleSelectCommand(grimpan));
+        grimpan.menu.executeCommand(new PremiumCommandProxy(new RectangleSelectCommand(grimpan)));
     }
     mousedown() {
         this.grimpan.active = true;
@@ -122,7 +122,7 @@ export class RectangleMode extends Mode {
 export class CircleMode extends Mode {
     constructor(grimpan) {
         super(grimpan);
-        grimpan.menu.executeCommand(new CircleSelectCommand(grimpan));
+        grimpan.menu.executeCommand(new PremiumCommandProxy(new CircleSelectCommand(grimpan)));
     }
     mousedown() {
         this.grimpan.active = true;
