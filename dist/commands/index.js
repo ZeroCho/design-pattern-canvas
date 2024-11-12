@@ -19,6 +19,34 @@ export class Adapter {
 // new Invoker(new Adapter(new BackCommand({} as any)));
 export class Command {
 }
+export const counter = {};
+class CommandDecorator {
+    command;
+    name;
+    constructor(command) {
+        this.command = command;
+        this.name = this.command.name;
+    }
+}
+class ExecuteLogger extends CommandDecorator {
+    execute() {
+        console.log(this.command.name + ' 명령을 실행합니다.');
+        this.command.execute();
+    }
+    showLogger() { }
+}
+class ExecuteCounter extends CommandDecorator {
+    execute() {
+        this.command.execute();
+        if (counter[this.command.name]) {
+            counter[this.command.name]++;
+        }
+        else {
+            counter[this.command.name] = 1;
+        }
+    }
+    additional() { }
+}
 export class BackCommand extends Command {
     history;
     name = 'back';
@@ -30,6 +58,8 @@ export class BackCommand extends Command {
         this.history.undo(); // receiver에게 로직 전송
     }
 }
+new ExecuteCounter(new ExecuteLogger(new BackCommand({})));
+new ExecuteLogger(new ExecuteCounter(new BackCommand({})));
 export class ForwardCommand extends Command {
     history;
     name = 'forward';

@@ -19,7 +19,36 @@ export class Adapter {
 // new Invoker(new Adapter(new BackCommand({} as any)));
 
 export abstract class Command {
+  abstract name: string;
   abstract execute(): void;
+}
+
+export const counter: { [key:string]: number } = {};
+
+abstract class CommandDecorator {
+  name: string;
+  constructor(protected readonly command: Command) {
+    this.name = this.command.name;
+  }
+  abstract execute(): void;
+}
+class ExecuteLogger extends CommandDecorator {
+  override execute() {
+    console.log(this.command.name + ' 명령을 실행합니다.');
+    this.command.execute();
+  }
+  showLogger() {}
+}
+class ExecuteCounter extends CommandDecorator {
+  override execute() {
+    this.command.execute();
+    if (counter[this.command.name]) {
+      counter[this.command.name]++;
+    } else {
+      counter[this.command.name] = 1;
+    }
+  }
+  additional() {}
 }
 
 export class BackCommand extends Command {
@@ -29,10 +58,12 @@ export class BackCommand extends Command {
     super();
   }
 
-  override execute(): void {
+  override execute(): void { 
     this.history.undo(); // receiver에게 로직 전송
   }
 }
+new ExecuteCounter(new ExecuteLogger(new BackCommand({} as any)));
+new ExecuteLogger(new ExecuteCounter(new BackCommand({} as any)));
 
 export class ForwardCommand extends Command {
   name = 'forward';
