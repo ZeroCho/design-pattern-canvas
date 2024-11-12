@@ -108,41 +108,113 @@ export class PipetteMode extends Mode {
   }
 }
 export class RectangleMode extends Mode {
+  startX?: number;
+  startY?: number;
+  endX?: number;
+  endY?: number;
+  imageData?: ImageData;
+
   constructor(grimpan: Grimpan) {
     super(grimpan);
     grimpan.menu.executeCommand(new PremiumCommandProxy(new RectangleSelectCommand(grimpan)));
   }
 
-  override mousedown(): void {
+  override mousedown(e: MouseEvent): void {
     this.grimpan.active = true;
+    this.startX = e.offsetX;
+    this.startY = e.offsetY;
+    this.imageData = this.grimpan.ctx.getImageData(0, 0, 300, 300);
   }
-  override mousemove(): void {
-    
+  override mousemove(e: MouseEvent): void {
+    this.endX = e.offsetX;
+    this.endY = e.offsetY;
+    // 캔버스 리셋
+    if (this.imageData) {
+      this.grimpan.ctx.putImageData(this.imageData, 0, 0);
+    }
+    this.grimpan.ctx.lineWidth = 1;
+    this.grimpan.ctx.lineCap = 'round';
+    this.grimpan.ctx.strokeStyle = this.grimpan.color;
+    this.grimpan.ctx.globalCompositeOperation = 'source-over';
+    const width = this.endX! - this.startX!;
+    const height = this.endY! - this.startY!;
+    this.grimpan.ctx.beginPath();
+    this.grimpan.ctx.rect(this.startX!, this.startY!, width, height)
+    this.grimpan.ctx.stroke();
   }
   override mouseup(e: MouseEvent): void {
     if (this.grimpan.active) {
+      this.grimpan.ctx.lineWidth = 1;
+      this.grimpan.ctx.lineCap = 'round';
+      this.grimpan.ctx.strokeStyle = this.grimpan.color;
+      this.grimpan.ctx.globalCompositeOperation = 'source-over';
+      const width = this.endX! - this.startX!;
+      const height = this.endY! - this.startY!;
+      this.grimpan.ctx.beginPath();
+      this.grimpan.ctx.rect(this.startX!, this.startY!, width, height)
+      this.grimpan.ctx.stroke();
       // 히스토리 저장
       this.invoke(new SaveHistoryCommand(this.grimpan));
+      this.startX = undefined;
+      this.startY = undefined;
+      this.imageData = undefined;
     }
     this.grimpan.active = false;
   }
 }
 export class CircleMode extends Mode {
+  startX?: number;
+  startY?: number;
+  endX?: number;
+  endY?: number;
+  imageData?: ImageData;
+
   constructor(grimpan: Grimpan) {
     super(grimpan);
     grimpan.menu.executeCommand(new PremiumCommandProxy(new CircleSelectCommand(grimpan)));
   }
 
-  override mousedown(): void {
+  override mousedown(e: MouseEvent): void {
     this.grimpan.active = true;
+    this.startX = e.offsetX;
+    this.startY = e.offsetY;
+    this.imageData = this.grimpan.ctx.getImageData(0, 0, 300, 300);
   }
-  override mousemove(): void {
-    
+  override mousemove(e: MouseEvent): void {
+    this.endX = e.offsetX;
+    this.endY = e.offsetY;
+    // 캔버스 리셋
+    if (this.imageData) {
+      this.grimpan.ctx.putImageData(this.imageData, 0, 0);
+    }
+    this.grimpan.ctx.lineWidth = 1;
+    this.grimpan.ctx.lineCap = 'round';
+    this.grimpan.ctx.strokeStyle = this.grimpan.color;
+    this.grimpan.ctx.globalCompositeOperation = 'source-over';
+    const width = this.endX! - this.startX!;
+    const height = this.endY! - this.startY!;
+    const radius = Math.hypot(width, height);
+    this.grimpan.ctx.beginPath();
+    this.grimpan.ctx.arc(this.startX!, this.startY!, radius, 0, Math.PI * 2)
+    this.grimpan.ctx.stroke();
   }
   override mouseup(e: MouseEvent): void {
     if (this.grimpan.active) {
+      this.grimpan.ctx.lineWidth = 1;
+      this.grimpan.ctx.lineCap = 'round';
+      this.grimpan.ctx.strokeStyle = this.grimpan.color;
+      this.grimpan.ctx.globalCompositeOperation = 'source-over';
+      const width = this.endX! - this.startX!;
+      const height = this.endY! - this.startY!;
+      const radius = Math.hypot(width, height);
+      this.grimpan.ctx.beginPath();
+      this.grimpan.ctx.arc(this.startX!, this.startY!, radius, 0, Math.PI * 2)
+      this.grimpan.ctx.stroke();
       // 히스토리 저장
       this.invoke(new SaveHistoryCommand(this.grimpan));
+      this.startX = undefined;
+      this.startY = undefined;
+      this.imageData = undefined;
     }
     this.grimpan.active = false;
   }
