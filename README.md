@@ -22,43 +22,51 @@
 ### Dependency Inversion Principle(DIP)
 의존성 역전 원칙
 - 추상성이 높은 클래스와 의존 관계를 맺는다
+- 상속 대신 합성을 하자
 - interface, abstract class를 매개변수로 받자
 
 # GoF 디자인 패턴
+* 강의에서 나오는 클라이언트(client)는 클라이언트-서버의 클라이언트가 아니라(사실 의미가 같기는 함), 현재 디자인패턴을 사용하는 코드를 클라이언트라고 부른다.
+
+## UML(강의를 위해 커스텀화)
+![legend drawio (1)](https://github.com/user-attachments/assets/daed106f-f368-4fa1-8c85-8db527fd837d)
+
 ## 생성(creational patterns)
 ### 싱글턴(Singleton)
 하나의 인스턴스만 존재함을 보장
 - 생성자도 private으로(자바스크립트에서는 symbol 사용해서 생성자 호출 막기)
 - 단일 책임 원칙 위반!
+- 강결합으로 인해 테스트하기 어려움
   
-![singleton drawio (1)](https://github.com/user-attachments/assets/97072e3e-4b16-4314-9f87-a48212967955)
+![singleton drawio](https://github.com/user-attachments/assets/e81c7f9d-53e7-4b42-ab17-732734c6cbae)
 
 ### 심플 팩토리(Simple Factory)
 객체를 반환하는 함수
 - 주로 조건문에 따라 다른 객체를 반환함
 - 단일 책임 원칙 위반!
 - 개방 폐쇄 원칙 위반!
-  
-![simple-factory drawio](https://github.com/user-attachments/assets/308d7a41-20d0-41af-a429-b66abef830b7)
+
+![simple-factory drawio (1)](https://github.com/user-attachments/assets/2b1f7b8c-856a-464d-97b1-f805719a1793)
+
 
 ### 팩토리 메서드(Factory Method)
 상위 클래스가 인터페이스 역할, 하위 클래스에서 구체적인 구현
 - 하위 클래스를 다양하게 만들어 OCP, SRP 충족
 - 상속을 통해서도 다른 객체를 생성할 수 있음
 
-![factory-method drawio](https://github.com/user-attachments/assets/8a1b7a42-a739-4902-8283-fad52565435b)
+![factory-method drawio (1)](https://github.com/user-attachments/assets/3dce6caf-e987-4c78-99da-a785d3fefd4c)
+
 
 ### 추상 팩토리(Abstract Factory)
 여러 팩토리의 그룹
 - 팩토리 메서드 패턴에서 확장하면 편함
 - 그림판, 메뉴, 히스토리의 세트가 브라우저별로 생성됨(Chrome 메뉴에 IE 히스토리가 생기는 등의 상황을 방지)
 
-![abstract-factory drawio](https://github.com/user-attachments/assets/d324f149-aca9-47b5-9ec7-d64b18c40669)
-
+![abstract-factory drawio (1)](https://github.com/user-attachments/assets/ebf9cb43-81ff-4c29-b791-eedf50e9ccf2)
 
 ### 빌더(Builder)
 복잡한 객체의 단계별 생성
-- drawBtnByType 메서드가 director(빌더의 set 메서드의 순서를 정하고 실행하는)의 역할
+- drawButtonByType 메서드가 director(빌더의 set 메서드의 순서를 정하고 실행하는)의 역할
 - setter에서 개별 속성 validation을 하고, build에서 최종적으로 전체 validation을 한 번 더 하면 좋음.
 
 ![builder drawio](https://github.com/user-attachments/assets/b2440e33-c07e-4ac3-a134-82311fe05980)
@@ -143,14 +151,24 @@
 순회가능한 객체를 반복하는 패턴
 - 배열, 문자열이 이미 Itertator protocol을 사용해서 구현되어 있음
 
+![iterator drawio](https://github.com/user-attachments/assets/f404bdcc-26da-48d6-be51-df8679d9431f)
+
 ### 메멘토(Memento)
 객체의 현재 상태를 박제하는 패턴
 - 객체는 불변 객체여야 함(Object.freeze 사용하기)
 - 박제할 대상 객체 내부에 위치하는 게 좋음(private 속성 접근 위해서)
+- 메멘토 객체를 생성하는 객체를 Originator(Grimpan), 사용하는 객체를 Caretaker(GrimpanHistory)라고 부름
+  
+![memento drawio](https://github.com/user-attachments/assets/2bfb8f45-6cf3-4f46-970e-74c8d4da6854)
 
 ### 방문자(Visitor)
 로직을 외부 클래스로 분리하는 패턴
 - private, protected 속성을 사용하기 어려움
+- draw 메서드는 일반적으로 accept라는 이름을 가짐
+- 클라이언트(GrimpanMenu)는 동일한 인터페이스(draw)로 다양한 버튼을 그릴 수 있음
+
+![visitor drawio](https://github.com/user-attachments/assets/cf5e91cc-7d25-48b1-9822-52a539af963b)
+
 
 ## 구조(structural patterns)
 
@@ -167,12 +185,47 @@
 - 써드파티 라이브러리는 코드를 수정하기 어려우므로 어댑터 패턴을 사용해서 타입을 맞추는 경우가 많음
 - 써드파티가 아니더라도 이미 여러군데서 사용하고 있는 내 코드는 수정하기 어려우므로 어댑터로 맞추는 경우가 많음
 
-![adapter drawio](https://github.com/user-attachments/assets/77647f3c-9dfb-453c-9239-50b6a7d4b0b3)
-
+![adapter drawio](https://github.com/user-attachments/assets/6de099dc-6776-4eae-a800-448042f308ae)
 
 ### 데코레이터(Decorator)
+기존 클래스 변경 없이 기능을 확장하는 패턴
+- 기존 클래스와 동일한 인터페이스 또는 일부 확장된 인터페이스를 가짐
+- 자바스크립트 데코레이터는 아래 믹스인 패턴 참고
+
+![decorator drawio](https://github.com/user-attachments/assets/ea7c855e-609d-45f6-aea4-65e34032a407)
+
 ### 믹스인(Mixin)
+기존 클래스를 상속하여 기능을 확장하는 패턴
+- 자바스크립트의 클래스 데코레이터를 믹스인 패턴으로 구현하기도 함
+- 리액트에서도 클래스 컴포넌트 시절 많이 사용되었음
+
+![mixin drawio](https://github.com/user-attachments/assets/62782bfd-bcd0-4c98-8100-4f48913db0d2)
+
+
 ### 대리인(Proxy)
+기존 클래스 변경 없이 접근제어, 캐싱, 지연 로딩 등의 기능을 추가하는 패턴
+- 자바스크립트의 프록시 객체도 프록시 패턴의 구현체로 볼 수 있음
+- 클라이언트(GrimpanMenu)는 원본 객체인지 프록시 객체인지 신경쓰지 않
+
+![proxy drawio (1)](https://github.com/user-attachments/assets/584e4c47-ae4e-46fc-a84e-608b9f450fe0)
+
 ### 플라이급(Flyweight)
+메모리를 아끼기 위해 객체를 외부에서 주입하는 패턴
+- 외부에서 주입하는 객체가 클 수록, 빈번하게 사용할수록 메모리를 많이 아낄 수 있음
+- 자바스크립트 프로토타입을 사용해서도 구현 가능
+- 왜 외부로 분리한 건지 코드상에서는 잘 안보여서 따로 설명 필요
+
 ### 다리(Bridge)
+추상과 구현을 분리하는 패턴
+- 추상은 interface같은 게 아님, 클라이언트가 관심있어 하는게 추상
+- 클라이언트가 관심있지 않지만 실제 구현에 필요한 로직들은 구현부로 감
+
+![bridge drawio (1)](https://github.com/user-attachments/assets/a2b2588d-2526-4c5b-a562-b3276b0f2d7a)
+
 ### 컴포지트(Composite)
+트리 구조의 객체를 다루는 패턴
+- parent<->children 구조의 객체를 아우르는 명령을 수행할 때 유용함
+- Circle, Rectangle처럼 더이상 자식이 없는 객체를 Leaf라고 부름
+- Circle, Rectangle들이 모여있는 객체를 Group
+
+![composite drawio](https://github.com/user-attachments/assets/7400bdae-c997-442a-8992-a8b54f45c7b8)
