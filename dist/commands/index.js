@@ -191,7 +191,7 @@ export class PremiumCommandProxy {
         // if (!this.command.loaded) {
         //   this.command.load();
         // }
-        if (!this.command.grimpan.isPremium) {
+        if (this.command.grimpan.isPremium) {
             this.command.execute();
         }
         else {
